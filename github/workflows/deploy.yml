@@ -1,52 +1,48 @@
+name: Desplegar página estática en GitHub Pages
 
-name: Deploy pagin estatica en pages 
 on:
-  #cuando  se hace push
+  # Ejecutar cuando se haga push a main
   push:
-  # rama main
-    branches: ["Main"]
-    #ejecutar manualmente desde la ventana de github  actions
+    branches: ["main"]
+
+  # Permitir ejecución manual desde GitHub Actions
   workflow_dispatch:
 
 permissions:
-#permisos necesarios para github actions escrib en el despliegue en consola
   contents: read
   pages: write
   id-token: write
-# solo permite un despliegue a la vez
+
+# Permitir un solo despliegue simultáneo
 concurrency:
   group: "pages"
   cancel-in-progress: true
 
 jobs:
   deploy:
-    enviroment:
-    name: github-pages 
-    url: 
-  runs-on: ubuntu-latest
-  steps:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
-    #revisar codigo
-    - name: Checkout
-      uses: actions/checkout@v6
+    runs-on: ubuntu-latest
 
-    # preparacion de githubs pages
-    - name: Setup Pages
-      uses: actions/configure-pages@v5
+    steps:
+      # Descargar el código del repositorio
+      - name: Checkout
+        uses: actions/checkout@v6
 
-    #carga de archivos a github pages
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v4
-      with:
-        #carpeta donde esta la web (index.html)
-        path: "."
-    
-    # desplegar los archivos con github pages
-    - name: Desplegar en GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
+      # Configurar GitHub Pages
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
 
-    #
+      # Subir los archivos de la página
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          # Carpeta donde se encuentra index.html
+          path: "."
 
-
-
+      # Publicar en GitHub Pages
+      - name: Desplegar en GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
